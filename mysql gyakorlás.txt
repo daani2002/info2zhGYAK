@@ -1,0 +1,145 @@
+2019-04-15 B
+
+create table Szerepel(
+	SzineszId int, 
+	FilmId int, 
+	primary key(SzineszId, FilmId),
+	foreign key (SzineszId) references Szineszek(ID),
+	foreign key (FilmId) references Filmek(ID),	
+);
+
+select sz.Id, sz.Nev, count(sz.ID) as FilmszerepekSzama
+from Szineszek as sz
+	inner join Szerepel sze
+		on sz.ID = sze.SzineszID
+group by sz.ID
+having count(sz.ID) > 2;
+
+select distinct
+	szi.ID, szi.Nev, s.ID, s.Nev
+form Szineszek szi
+	inner join Szerepel sze
+		on sze.SzineszId = szi.Id
+	inner join Filmek f
+		on f.ID = sze.FilmId
+	inner join Studiok s
+		on s.ID = f.StudioID;
+
+delete from Kolcsonzesek k
+	where FelhasznaloID = 2 OR FelhasznaloID = 3;
+
+2019-04-15 A
+
+create table Filmek(
+	ID int primary key,
+	Cim nvarchar(200),
+	GyartasiEv datetime,
+	StudioId int not null,
+	foreign key (StudioID) references Studiok(ID)
+);
+
+select f.ID, f.Nev, Count(k.ID) as KolcsonzesekSzama
+from Felhasznalok as f
+	left outer join Kolcsonzesek as k
+		on f.ID = Kolcsonzesek.FelhasznaloID
+where YEAR(k.KolcsonzesDatum) > 2018
+group by f.ID;
+
+select distinct
+	s.ID, s.Nev, sz.ID, sz.Nev
+from Studiok s
+	inner join Filmek f
+		on f.StudioID = s.ID
+	inner join Szerepel sze
+		on sze.FilmID = f.ID
+	inner join Szineszek sz
+		on sz.ID = sze.SzineszID;
+
+update Kolcsonzesek 
+set LejaratiDatum = addate(LejaratiDatum, 14)
+	where LejaratiDatum = addate(curdate(), 1);
+
+2018-04-20 B
+
+select count(b.Id)
+from Felhasznalo f
+	inner join Bejegyzes b
+		on f.Id = b.SzerzoId
+where f.Email LIKE '%@gmail.com' and 
+	b.BejegyzesDátuma >= YEAR(curdate());
+
+select f.Id, f.Cím, count(b.Id)
+from Fórum f
+	inner join Téma t
+		on f.Id = t.FórumId
+	inner join Bejegyzés b
+		on b.TémaId = t.Id
+where b.BejegyzésDátuma > '2023-01-01'
+group by f.Id;
+
+select t.Id, t.Cím 
+from Téma t
+	inner join Bejegyzés b
+		on t.Id = b.TémaId
+group by t.Id
+having count(b.Id) > 49;
+
+delete Bejegyzés where SzerzoId = 1;
+delete Fórum where TulajdonosId = 1;
+delete Felhasznalo where Id = 1;
+
+2018-04-20 A
+
+select t.Cím, f.Cím, fh.Név, max(b.BejegyzésDátum)
+from Fórum f
+	inner join Téma t on t.FórumId = f.Id
+	inner join Bejegyzés b on b.TémaId = t.Id
+	inner join Felhasználó fh on fh.Id = b.SzerzŐId
+group by f.Id;
+
+select count(b.Id)
+from Bejegyzés b 
+	inner join Felhasználó f
+		on f.Id = b.SzerzőId
+where f.Email LIKE '%@gmail.com';
+
+select count(b.Szöveg)
+from Bejegyzés b
+	where b.SzülőBejegyzésId = 
+		(select b.Id from Bejegyzés b
+		where b.Szöveg = 'info2');
+
+insert into Téma(Cím, Leírás, FórumId) 
+values ('2017/18/2', '', 3);
+
+delete from Bejegyzés
+where BejegyzésDátuma < '2018-02-01' and TémaId = 4;
+
+update Bejegyzés
+set TémaId = 6
+where TémaId = 4;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
